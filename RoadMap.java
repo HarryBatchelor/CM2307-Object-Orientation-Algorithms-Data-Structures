@@ -222,25 +222,37 @@ public class RoadMap {
 		}
 
 		// Add your code here
-		void breadthFirstSearch(int search){
-			// Mark Vertices as not visited
+
+
 			boolean visited[] = new boolean[v];
 
 			LinkedList<Integer> queue = new LinkedList<Integer>();
-
-			visited[search]=true;
-			queue.add(search);
+			Vertex currentVertex = startVertex;
+			visited[currentVertex.getIndex()] = true;
+			queue.add(currentVertex);
 
 			while(queue.size()!=0){
 				// dequeue a vertex from the queue
-				search = queue.poll();
+				currentVertex = queue.poll();
+				ArrayList<Edge> currentIncedentRoads = currentVertex.getIncidentRoads();
 
+				ArrayList<Integer> tempInterger = new ArrayList<Integer>();
+				for(Edge eachRoad: currentIncedentRoads){
+					//checking if adjacent road is a destination
+						if(eachRoad.getFirstVertex() == endVertex || eachRoad.getSecondVertex() == endVertex()){
+							return true;
+						}
+						//checking points with charging stations
+						if(eachRoad.getFirstVertex() == currentVertex && (eachRoad.getSecondVertex()).hasChargingStation()){
+							tempInterger.add(eachRoad.getSecondVertex());
+						}
+						if(eachRoad.getSecondVertex() = currentVertex && (eachRoad.getFirstVertex()).hasChargingStation()){
+							tempInterger.add(eachRoad.getFirstVertex());
+						}
+				}
+				System.out.println(currentVertex+"");
 				iterator<Integer> i = adj[search].listIterator();
-				while(i.hasNext()){
-					int n = i.next();
-					if(!visited[n]){
-						visited[n] = true;
-						queue.add(n);
+				
 					}
 			}
 		}
