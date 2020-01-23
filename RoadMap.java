@@ -1,7 +1,7 @@
 
 /* Put your student number here
- *
- * Optionally, if you have any comments regarding your submission, put them here. 
+ * C1816377
+ * Optionally, if you have any comments regarding your submission, put them here.
  * For instance, specify here if your program does not generate the proper output or does not do it in the correct manner.
  */
 
@@ -163,6 +163,8 @@ public class RoadMap {
 
 				// Add your code here to create a new vertex using the information above and add
 				// it to places
+				Vertex v = new Vertex(placeName,hasChargingStataion,i);
+				places.add(v);
 			}
 
 			for (int j = 0; j < numEdges; ++j) {
@@ -176,6 +178,10 @@ public class RoadMap {
 				// Add your code here to create a new edge using the information above and add
 				// it to roads
 				// You should also set up incidentRoads for each vertex
+				Edge e = new Edge(length, vtx1, vtx2);
+				roads.add(e);
+				vtx1.addIncidentRoad(e);
+				vtx2.addIncidentRoad(e);
 			}
 
 			sc.close();
