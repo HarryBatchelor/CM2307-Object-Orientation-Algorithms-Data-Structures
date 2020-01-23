@@ -222,6 +222,28 @@ public class RoadMap {
 		}
 
 		// Add your code here
+		void breadthFirstSearch(int search){
+			// Mark Vertices as not visited
+			boolean visited[] = new boolean[v];
+
+			LinkedList<Integer> queue = new LinkedList<Integer>();
+
+			visited[search]=true;
+			queue.add(search);
+
+			while(queue.size()!=0){
+				// dequeue a vertex from the queue
+				search = queue.poll();
+
+				iterator<Integer> i = adj[search].listIterator();
+				while(i.hasNext()){
+					int n = i.next();
+					if(!visited[n]){
+						visited[n] = true;
+						queue.add(n);
+					}
+			}
+		}
 	}
 
 	public void printMap() {
