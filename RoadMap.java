@@ -223,40 +223,51 @@ public class RoadMap {
 
 		// Add your code here
 
-
-			boolean visited[] = new boolean[v];
+			if (startVertex.getIndex() == endVertex.getIndex()){
+				return true;
+			}
+			boolean visited[] = new boolean[places.size()];
 
 			LinkedList<Integer> queue = new LinkedList<Integer>();
 			Vertex currentVertex = startVertex;
 			visited[currentVertex.getIndex()] = true;
-			queue.add(currentVertex);
+			queue.add(currentVertex.getIndex());
 
 			while(queue.size()!=0){
 				// dequeue a vertex from the queue
-				currentVertex = queue.poll();
+				currentVertex = places.get(queue.poll());
 				ArrayList<Edge> currentIncedentRoads = currentVertex.getIncidentRoads();
 
 				ArrayList<Integer> tempInterger = new ArrayList<Integer>();
 				for(Edge eachRoad: currentIncedentRoads){
 					//checking if adjacent road is a destination
-						if(eachRoad.getFirstVertex() == endVertex || eachRoad.getSecondVertex() == endVertex()){
+						if(eachRoad.getFirstVertex() == endVertex || eachRoad.getSecondVertex() == endVertex){
 							return true;
 						}
 						//checking points with charging stations
-						if(eachRoad.getFirstVertex() == currentVertex && (eachRoad.getSecondVertex()).hasChargingStation()){
-							tempInterger.add(eachRoad.getSecondVertex());
+						else if(eachRoad.getFirstVertex() == currentVertex && (eachRoad.getSecondVertex()).hasChargingStation()){
+							tempInterger.add(eachRoad.getSecondVertex().getIndex());
 						}
-						if(eachRoad.getSecondVertex() = currentVertex && (eachRoad.getFirstVertex()).hasChargingStation()){
-							tempInterger.add(eachRoad.getFirstVertex());
+						else if (eachRoad.getSecondVertex() == currentVertex && (eachRoad.getFirstVertex()).hasChargingStation()) {
+							tempInterger.add(eachRoad.getFirstVertex().getIndex());
 						}
+
 				}
-				System.out.println(currentVertex+"");
-				iterator<Integer> i = adj[search].listIterator();
-				
+
+				Iterator<Integer> i = tempInterger.iterator();
+				//n is the current vertex being checked
+				while(i.hasNext()){
+					int n = i.next();
+					if(!visited[n]){
+						visited[n] = true;
+						queue.add(n);
 					}
+				}
 			}
 		}
-	}
+
+
+
 
 	public void printMap() {
 		System.out.println("The map contains " + this.numPlaces() + " places and " + this.numRoads() + " roads");
