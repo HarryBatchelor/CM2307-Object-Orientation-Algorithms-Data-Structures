@@ -1,7 +1,7 @@
 
 /* Put your student number here
- *
- * Optionally, if you have any comments regarding your submission, put them here. 
+ * 
+ * Optionally, if you have any comments regarding your submission, put them here.
  * For instance, specify here if your program does not generate the proper output or does not do it in the correct manner.
  */
 
