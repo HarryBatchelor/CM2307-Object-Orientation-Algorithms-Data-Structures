@@ -1,6 +1,6 @@
 
 /* Put your student number here
- * 
+ * C1816377
  * Optionally, if you have any comments regarding your submission, put them here.
  * For instance, specify here if your program does not generate the proper output or does not do it in the correct manner.
  */
@@ -163,6 +163,8 @@ public class RoadMap {
 
 				// Add your code here to create a new vertex using the information above and add
 				// it to places
+				Vertex v = new Vertex(placeName,hasChargingStataion,i);
+				places.add(v);
 			}
 
 			for (int j = 0; j < numEdges; ++j) {
@@ -176,6 +178,10 @@ public class RoadMap {
 				// Add your code here to create a new edge using the information above and add
 				// it to roads
 				// You should also set up incidentRoads for each vertex
+				Edge e = new Edge(length, vtx1, vtx2);
+				roads.add(e);
+				vtx1.addIncidentRoad(e);
+				vtx2.addIncidentRoad(e);
 			}
 
 			sc.close();
@@ -216,7 +222,53 @@ public class RoadMap {
 		}
 
 		// Add your code here
-	}
+
+			if (startVertex.getIndex() == endVertex.getIndex()){
+				return true;
+			}
+			boolean visited[] = new boolean[places.size()];
+
+			LinkedList<Integer> queue = new LinkedList<Integer>();
+			Vertex currentVertex = startVertex;
+			visited[currentVertex.getIndex()] = true;
+			queue.add(currentVertex.getIndex());
+
+			while(queue.size()!=0){
+				// dequeue a vertex from the queue
+				currentVertex = places.get(queue.poll());
+				ArrayList<Edge> currentIncedentRoads = currentVertex.getIncidentRoads();
+
+				ArrayList<Integer> tempInterger = new ArrayList<Integer>();
+				for(Edge eachRoad: currentIncedentRoads){
+					//checking if adjacent road is a destination
+						if(eachRoad.getFirstVertex() == endVertex || eachRoad.getSecondVertex() == endVertex){
+							return true;
+						}
+						//checking points with charging stations
+						else if(eachRoad.getFirstVertex() == currentVertex && (eachRoad.getSecondVertex()).hasChargingStation()){
+							tempInterger.add(eachRoad.getSecondVertex().getIndex());
+						}
+						else if (eachRoad.getSecondVertex() == currentVertex && (eachRoad.getFirstVertex()).hasChargingStation()) {
+							tempInterger.add(eachRoad.getFirstVertex().getIndex());
+						}
+
+				}
+
+				Iterator<Integer> i = tempInterger.iterator();
+				//n is the current vertex being checked
+				while(i.hasNext()){
+					int n = i.next();
+					if(!visited[n]){
+						visited[n] = true;
+						queue.add(n);
+					}
+				}
+			}
+			return false;
+		}
+
+
+
 
 	public void printMap() {
 		System.out.println("The map contains " + this.numPlaces() + " places and " + this.numRoads() + " roads");
