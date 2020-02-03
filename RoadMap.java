@@ -185,7 +185,7 @@ public class RoadMap {
 				Edge e = new Edge(length, vtx1, vtx2);
 				roads.add(e);
 				vtx1.addIncidentRoad(e);
-				Edge e2 = new Edge(Lenght, vtx2, vtx1);
+				Edge e2 = new Edge(length, vtx2, vtx1);
 				vtx2.addIncidentRoad(e2);
 
 			}
