@@ -258,34 +258,31 @@ public class RoadMap {
 
 			for(Vertex i : places){
 				Box x = new Box(i.getName());
-				box.add(x); //fills array woith a differnt box for each node
+				box.add(x); //Fills the array a differnt dijkstras for each node it goes to
 
 			}
-			box.get(startVertex.getIndex()).updateWorking(0); //also being the first it has a cost of 0
-			//Dijkstras is now set u, box for each node and the starting point set
-			ArrayList<Vertex> nodes = new ArrayList<Vertex>(); //then itialises an array list for nodes
-			ArrayList<Vertex> visited = new ArrayList<Vertex>(); //to vist and nodes that have been visted
-			nodes.add(startVertex); //adds the start vertex to the nodes to vist array
-			box.get(startVertex.getIndex()).setStart(nodes); //current sets the path of the start to just the start
+			box.get(startVertex.getIndex()).updateWorking(0);
 
-			while(nodes.size()> 0){ //while there are still nodes in the nodes to vist array it will continue
+			ArrayList<Vertex> nodes = new ArrayList<Vertex>(); //makes an array list for nodes to visit and the ones that have been visited
+			ArrayList<Vertex> visited = new ArrayList<Vertex>();
+			nodes.add(startVertex); //adds the start vertex to the visit array
+			box.get(startVertex.getIndex()).setStart(nodes);
+
+			while(nodes.size()> 0){ //while there are still nodes to vist array it will continue
 				box_print(box);
 				int lowestIndex = findLowest(nodes,box); //passes the list of nodes through to find lowest function
-				Vertex lowestNode = nodes.remove(lowestIndex); //which returns an index of the node next in the order
-				visited.add(lowestNode); //this is then taken of the stack and becomes the node used this loop
+				Vertex lowestNode = nodes.remove(lowestIndex); //Returns a list of the nodes in order
+				visited.add(lowestNode);
 
-				ArrayList<Edge> Roads = lowestNode.getIncidentRoads(); //then will get the edges conected to the node
+				ArrayList<Edge> Roads = lowestNode.getIncidentRoads(); //gets the edges conected to the node
 				 for (Edge r : roads){
-					 int length = r.getLength(); //then iterating along these roads and find the destionation node
-					 Vertex destination = r.getSecondVertex(); //alongwith the cost of the edge to get to it
+					 int length = r.getLength(); //iterates along these roads and find the destionation node
+					 Vertex destination = r.getSecondVertex(); //as well as finding the cost to get to it
 
-					 //Long line of code here but basically if the lowest node's cost + the cost of the arc is less
- 					//then the destinations current working value then it lowers the destinations working value.
+					 //if lowest node's cost + the cost of the arc is less then the destitations cureent working value then it lowers the destinations working value
 					if (box.get(lowestNode.getIndex()).getWorking()+length <  box.get(destination.getIndex()).getWorking() || box.get(destination.getIndex()).getWorking() == -1){
 						box.get(destination.getIndex()).updateWorking(box.get(lowestNode.getIndex()).getWorking()+length);
-					//This update the routes for the node, it takes the previous node that was of the lowest
-					//working value and then changes the given nodes route to be the same as the route above it
-					//plus then itself. This way it follows dijkstras.
+
 					box.get(destination.getIndex()).setStart(box.get(lowestNode.getIndex()).getRoute());
 					box.get(destination.getIndex()).addToRoute(destination);
 					}
@@ -295,8 +292,8 @@ public class RoadMap {
 				 }
 			}
 			box_print(box);															//This is just for debugging
-			int cost = box.get(endVertex.getIndex()).getWorking();					//but is also can been used to show
-			System.out.println("Shortest path has a cost of "+String.valueOf(cost));	//all the infomation from the dijkstra
+			int cost = box.get(endVertex.getIndex()).getWorking();
+			System.out.println("Shortest path has a cost of "+String.valueOf(cost));
 
 			path = box.get(endVertex.getIndex()).getRoute();
 		}

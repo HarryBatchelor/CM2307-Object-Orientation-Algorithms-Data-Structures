@@ -1,0 +1,17 @@
+Because the time complexity depends on the number of inputs it has the complexity is linear which means that if you had
+10 edges and vertices it would take a lot less steps than if you were to have 100000 of each.
+This means that the run time of the algorithm increases at an order of magnitude proportional to v+e.
+Therefore the time complexity is O(v+e)
+--------PSUDO CODE --------
+ if Start is the same as end there is a link
+ make empty list
+ the current vertex is the start vertex
+ if the current vertex position has already been visited then there is a link
+
+ while the queue isn't empty
+ remove a vertex from the queue
+
+ for each edge check if adjacent to destination
+ check all points that have a charging station
+
+ check if all the stations have been visited while finding a path to the destination
