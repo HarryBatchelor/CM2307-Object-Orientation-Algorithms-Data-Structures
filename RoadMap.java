@@ -16,8 +16,7 @@ class Vertex {
 		incidentRoads = new ArrayList<Edge>();
 		index = idx;
 		chargingStation = chargingStationAvailable;
-		path = new ArrayList<Vertex>();
-		working = -1;
+
 
 	}
 
@@ -46,8 +45,6 @@ class Vertex {
 	private ArrayList<Edge> incidentRoads; // Incident edges
 	private boolean chargingStation; // Availability of charging station
 	private int index; // Index of this vertex in the vertex array of the map
-	private ArrayList<Vertex> path;
-	private int working;
 }
 
 class Edge {
@@ -70,6 +67,49 @@ class Edge {
 
 	private int length;
 	private Vertex[] incidentPlaces;
+}
+
+class Box{
+	public Box(String labelOfNode){
+		label = labelOfNode;
+		working = -1;
+		route = new ArrayList<Vertex>();
+	}
+	public void updateWorking(int newValue){
+		if (newValue < working || working  == -1){
+			working = newValue;
+		}
+	}
+	public void setStart(ArrayList<Vertex> v){
+		route.clear();
+		for (Vertex i : v){
+			route.add(i);
+		}
+	}
+	public void addToRoute(Vertex v){
+		route.add(v);
+	}
+	public ArrayList<Vertex> getRoute(){
+		return route;
+	}
+	public int getWorking(){
+		return working;
+	}
+	public String getInfo(){
+		String w_str = String.valueOf(working);
+		String outRoute = "";
+
+		for (Vertex i : route){
+			outRoute = (outRoute + i.getName());
+		}
+		if (w_str.length() < 2){
+			w_str += " ";
+		}
+		return(label+"  "+w_str+"  "+outRoute);
+	}
+	private String label;
+	private int working;
+	private ArrayList<Vertex> route;
 }
 
 // A class that represents a sparse matrix
@@ -210,61 +250,59 @@ public class RoadMap {
 		// Sanity check for the case where the start vertex and the end vertex are the
 		// same
 		if (startVertex.getIndex() == endVertex.getIndex()) {
-			path.add(startVertex);
+		  path.add(startVertex);
+
+		}else{
+		// Add your code here
+			ArrayList<Box> box = new ArrayList<Box>(); //initalise an array of dijkstra boxes
+
+			for(Vertex i : places){
+				Box x = new Box(i.getName());
+				box.add(x); //fills array woith a differnt box for each node
+
+			}
+			box.get(startVertex.getIndex()).updateWorking(0); //also being the first it has a cost of 0
+			//Dijkstras is now set u, box for each node and the starting point set
+			ArrayList<Vertex> nodes = new ArrayList<Vertex>(); //then itialises an array list for nodes
+			ArrayList<Vertex> visited = new ArrayList<Vertex>(); //to vist and nodes that have been visted
+			nodes.add(startVertex); //adds the start vertex to the nodes to vist array
+			box.get(startVertex.getIndex()).setStart(nodes); //current sets the path of the start to just the start
+
+			while(nodes.size()> 0){ //while there are still nodes in the nodes to vist array it will continue
+				box_print(box);
+				int lowestIndex = findLowest(nodes,box); //passes the list of nodes through to find lowest function
+				Vertex lowestNode = nodes.remove(lowestIndex); //which returns an index of the node next in the order
+				visited.add(lowestNode); //this is then taken of the stack and becomes the node used this loop
+
+				ArrayList<Edge> Roads = lowestNode.getIncidentRoads(); //then will get the edges conected to the node
+				 for (Edge r : roads){
+					 int length = r.getLength(); //then iterating along these roads and find the destionation node
+					 Vertex destination = r.getSecondVertex(); //alongwith the cost of the edge to get to it
+
+					 //Long line of code here but basically if the lowest node's cost + the cost of the arc is less
+ 					//then the destinations current working value then it lowers the destinations working value.
+					if (box.get(lowestNode.getIndex()).getWorking()+length <  box.get(destination.getIndex()).getWorking() || box.get(destination.getIndex()).getWorking() == -1){
+						box.get(destination.getIndex()).updateWorking(box.get(lowestNode.getIndex()).getWorking()+length);
+					//This update the routes for the node, it takes the previous node that was of the lowest
+					//working value and then changes the given nodes route to be the same as the route above it
+					//plus then itself. This way it follows dijkstras.
+					box.get(destination.getIndex()).setStart(box.get(lowestNode.getIndex()).getRoute());
+					box.get(destination.getIndex()).addToRoute(destination);
+					}
+					if((nodes.contains(destination) == false && visited.contains(destination) == false) && destination.hasChargingStation() == true){
+						nodes.add(destination);
+					}
+				 }
+			}
+			box_print(box);															//This is just for debugging
+			int cost = box.get(endVertex.getIndex()).getWorking();					//but is also can been used to show
+			System.out.println("Shortest path has a cost of "+String.valueOf(cost));	//all the infomation from the dijkstra
+
+			path = box.get(endVertex.getIndex()).getRoute();
+		}
 			return path;
 		}
 
-		// Add your code here
-		int[] distance = new int[places.size()]; //List to store distances of places from start vertex
-		ArrayList<Integer> visited = new ArrayList<Integer>();
-		PriorityQ<VertexDistance> priorityQ = new PriorityQ<VertexDistance>(places.size(), new VertexDistance());
-
-		for (int i=0; i < places.size(); i++){ //For each index, set the value to infinite as a placeholder
-		distance[i] = Integer.MAX_VALUE; //We can check if new distance is less than old, should be less tan infinite
-	}
-		priorityQ.add(new VertexDistance(startVertex.getIndex(),0)); //add the start vertex to the priority queue always in position 0
-		distance[startVertex.getIndex()] = 0; //distance from the start vertex to itself is always 0
-
-		while(visited.size() != places.size()){ //while there are still places left to vist
-			int minimumDistanceVertex = priorityQ.remove().VertexIndex; //Remove the minimum distance vertex from the front of the priority queue
-			visited.add(minimumDistanceVertex); //Add the minium distance to the list of vertexes
-
-			int edgeDistance = -1; //initialise distance between vertexrs as null values
-			int newDistance = -1;
-
-			ArrayList<Edge> adjRoads = places.get(minimumDistanceVertex).getIncidentRoads(); //get a list of all the roads to conected to current vertex
-			ArrayList<Integer[]> adjVertex = new ArrayList<Integer[]>();
-
-			for (Edge eachRoad: adjRoads){
-				//checking for points with charging stations with raods going each way
-				//if the road goes from out current vertex to another, add the index to the list to get to the vertex
-				if(eachRoad.getFirstVertex().getIndex() == minimumDistanceVertex){
-					Integer[]tempArray = {eachRoad.getSecondVertex().getIndex(), eachRoad.getLength()};
-					adjVertex.add(tempArray); //store vertex index and distance to it from current vertex
-				}
-				//if the road does not go to the vertex it must already be at the vertex
-				else{
-					Integerp[]tempArray = {eachRoad.getFirstVertex().getIndex(), eachRoad.getLength()};
-					adjVertex.add(tempArray);
-				}
-
-			}
-			for(int i = 0; i<adjVertex.size(); i++){
-				Integer[]currentV = adjVertex.get(i); //get the list of the neighbouring vertexes and loop through them
-
-				if(!visited.contains(currentV[0])){ //if the current vertex has not been visited
-					edgeDistance = currentV[1];
-					newDistance = distance[minimumDistanceVertex] + edgeDistance; //add the distance to that vertex to that total distance
-				}
-				if(newDistance < distance[minimumDistanceVertex]){ //if the new distance is cheaper in cost
-					distance[minimumDistanceVertex] = newDistance; //change for the distnace
-				}
-				priorityQ.add(new VertexDistance(currentV[0], distance[currentV[0]])); //save the current vertex and its distance from the start vertex
-			}
-		}
-
-	return path;
-}
 
 	// Check if two vertices are connected by a path with charging stations on each itermediate vertex.
 	// Return true if such a path exists; return false otherwise.
@@ -322,6 +360,34 @@ public class RoadMap {
 			return false;
 		}
 
+		private int findLowest(ArrayList<Vertex> nodes, ArrayList<Box> box){
+			//Used in the dijkstras it finds the node next in the visited order
+			int min = -1;
+			Vertex lowest = null;
+			for (Vertex i : nodes){
+				if (box.get(i.getIndex()).getWorking() < min || min == -1){  //it tests all of the nodes the one with the lowest
+					lowest = i;												  //working value is found. The default value at the start is -1
+					min = box.get(i.getIndex()).getWorking();				  //this way the first value checked will always become the lowest node
+				}															  //after that its only updated then a node of lower cost is found.
+			}
+			return nodes.indexOf(lowest); //then it returns the index of that node.
+		}
+
+		private void debug_print(String label, ArrayList<Vertex> nodes){
+			System.out.print(label+" ");
+			for(Vertex V : nodes){					//When passed a list of nodes just shows their label
+				System.out.print(V.getName()+" ");	//Used for debugging when designing the algorithm.
+			}
+			System.out.println(" ");
+		}
+
+		private void box_print(ArrayList<Box> NumbBoxes){
+			System.out.println("Current Boxes");
+			for (Box i : NumbBoxes){			//similar to debug_print this is for debugging
+				System.out.println(i.getInfo()); //pass the array containing the dijkstra boxes
+			}										//and it will print all the infomation about the nodes.
+			System.out.println("");
+		}
 
 
 
