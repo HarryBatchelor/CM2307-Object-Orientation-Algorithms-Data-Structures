@@ -2,7 +2,7 @@ import java.io.*;
 import java.util.*;
 
 
-public class diceGame implements GameInterface {
+public class DiceGame implements GameInterface {
 
   // The BufferedReader used throughout
   public static BufferedReader br=new BufferedReader(new InputStreamReader(System.in));
