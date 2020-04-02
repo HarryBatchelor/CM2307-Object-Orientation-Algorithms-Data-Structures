@@ -2,7 +2,7 @@ import java.io.*;
 import java.util.*;
 
 
-public class DieGame implements GameInterface {
+public class diceGame implements GameInterface {
 
   // The BufferedReader used throughout
   public static BufferedReader br=new BufferedReader(new InputStreamReader(System.in));
@@ -10,7 +10,7 @@ public class DieGame implements GameInterface {
   // The random number generator used throughout
   public static RandomInterface r =new LinearCongruentialGenerator();
 
-  // Variable(s) used in the die game methods
+  // Variable(s) used in the dice game methods
   public static HashSet<Integer> numbersRolled=new HashSet<Integer>();
 
     public void initialiseGame() {
@@ -22,17 +22,17 @@ public class DieGame implements GameInterface {
     public void mainGame() {
         // The main game:
 
-        // Let the user roll the die twice
+        // Let the user roll the dice twice
         for (int i=0; i<2; i++) {
-            System.out.println("Hit <RETURN> to roll the die");
+            System.out.println("Hit <RETURN> to roll the dice");
 
             try {br.readLine();}
             catch (IOException e){System.out.println(e);}
 
-            int dieRoll=(int)(r.next() * 6) + 1;
+            int diceRoll=(int)(r.next() * 6) + 1;
 
-            System.out.println("You rolled " + dieRoll);
-            numbersRolled.add(new Integer(dieRoll));
+            System.out.println("You rolled " + diceRoll);
+            numbersRolled.add(new Integer(diceRoll));
         }
 
         // Display the numbers rolled
@@ -42,7 +42,7 @@ public class DieGame implements GameInterface {
     public void declareGameWinner() {
         // Declare the winner:
 
-        // User wins if at least one of the die rolls is a 1
+        // User wins if at least one of the dice rolls is a 1
         if (numbersRolled.contains(new Integer(1))) {
             System.out.println("You won!");
         }

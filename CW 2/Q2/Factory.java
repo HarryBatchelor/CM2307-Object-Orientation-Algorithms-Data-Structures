@@ -5,7 +5,7 @@ public class Factory {
         if (ans.equals("c")) {
             return new CardGame();
         } else if (ans.equals("d")) {
-            return new DieGame();
+            return new DiceGame();
         } else {
             System.out.println("Input not understood");
             System.exit(1);
